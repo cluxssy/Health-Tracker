@@ -1,0 +1,94 @@
+#include<iostream>
+#include<conio.h>
+
+using namespace std;
+
+class create_user {
+    string name[30];
+    char gender;
+    int age;
+    float weight;
+    float height;
+    string username;
+    string password;
+    public :
+        int registeruser() {
+        cout<<"Enter name: ";
+        cin>>name[30];
+        cout<<"Enter age: ";
+        cin>>age;
+
+
+        while(true) {
+            cout<<"Enter sex";
+            cin>>gender;
+            if(gender=='m' || gender=='M'|| gender=='f'||gender=='F') {
+                break;
+            }
+            else {
+                cout<<"Sorry wrong gender!!"<<endl;
+                cout<<"If u think this is your real gender please die"<<endl;
+                cout<<"If u think there has been an error PLease enter again"<<endl;
+            }
+        }
+
+            cout<<"Enter weight: ";
+            cin>>weight;
+            cout<<"Enter height: ";
+            cin>>height;
+            cout<<"Enter username";
+            cin>>username;
+            cout<<"Enter password";
+            cin>>password;
+            cout<<"User Created successfully!!"<<endl;
+        }
+        bool validateLogin(string username,string password){    
+            if(this->username==username && this->password==password){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+    };
+
+
+    int main() {
+        string username,password; //using it in switch case 2nd block
+        create_user user1;
+        while (1){
+            cout<<"-----------MENU------------"<<endl;
+            cout<<"1. Create user"<<endl;
+            cout<<"3. Exit"<<endl;
+
+            cout<<"Enter your choice: ";
+            int choice;
+            cin>>choice;   
+            
+            switch(choice) {
+                case 1:
+                    user1.registeruser();
+                    break;
+                case 2:
+                    
+                    cout<<"Enter username";
+                    cin>>username;
+                    cout<<"Enter password";
+                    cin>>password;
+
+                    if(user1.validateLogin(username,password)){
+                        cout << "Login Successfull";
+
+                    }
+                    else{
+                        cout << "Invalid username or password";
+                    }
+                    break;
+                default:
+                    cout<<"Wrong option";
+                    break;
+            }
+        }
+        getch();
+    }
+
