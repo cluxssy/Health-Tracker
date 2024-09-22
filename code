@@ -1,5 +1,6 @@
 #include<iostream>
 #include<conio.h>
+#include<fstream>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ class create_user {
     public :
         int registeruser() {
         cout<<"Enter name: ";
-        cin>>name[30];
+        cin>>name[0];
         cout<<"Enter age: ";
         cin>>age;
 
@@ -50,6 +51,13 @@ class create_user {
                 return false;
             }
         }
+        int displayuser(){
+            cout<<name<<endl;
+            cout<<gender<<endl;
+            cout<<age<<endl;
+            cout<<weight<<endl;
+            cout<<height<<endl;
+        }
     };
 
 
@@ -59,6 +67,7 @@ class create_user {
         while (1){
             cout<<"-----------MENU------------"<<endl;
             cout<<"1. Create user"<<endl;
+            cout<<"2.Login user"<<endl;
             cout<<"3. Exit"<<endl;
 
             cout<<"Enter your choice: ";
@@ -78,11 +87,12 @@ class create_user {
 
                     if(user1.validateLogin(username,password)){
                         cout << "Login Successfull";
-
+                        user1.displayuser();
                     }
                     else{
                         cout << "Invalid username or password";
                     }
+                    
                     break;
                 default:
                     cout<<"Wrong option";
@@ -92,3 +102,12 @@ class create_user {
         getch();
     }
 
+void storeUserData(string& username,string& password) {
+    ofstream file("users.txt", ios::app);
+    if (file.is_open()) {
+        file << username << ":" << password <<  endl;
+        file.close();
+    } else {
+        cerr << "Error opening file!" << endl;
+    }
+}
