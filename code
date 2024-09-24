@@ -1,11 +1,12 @@
 #include<iostream>
 #include<conio.h>
-#include<fstream>
+#include<sqlite3.h>
 
 using namespace std;
+void database();
 
 class create_user {
-    string name[30];
+    string name;
     char gender;
     int age;
     float weight;
@@ -13,9 +14,9 @@ class create_user {
     string username;
     string password;
     public :
-        int registeruser() {
+    void registeruser() {
         cout<<"Enter name: ";
-        cin>>name[0];
+        cin>>name;
         cout<<"Enter age: ";
         cin>>age;
 
@@ -43,7 +44,7 @@ class create_user {
             cin>>password;
             cout<<"User Created successfully!!"<<endl;
         }
-        bool validateLogin(string username,string password){    
+        bool validateLogin(string username,string password){
             if(this->username==username && this->password==password){
                 return true;
             }
@@ -51,15 +52,50 @@ class create_user {
                 return false;
             }
         }
-        int displayuser(){
-            cout<<name<<endl;
+        void displayuser(){
+            cout<<name[0]<<endl;
             cout<<gender<<endl;
             cout<<age<<endl;
             cout<<weight<<endl;
             cout<<height<<endl;
         }
+        friend void insert_into_database(create_user&);
     };
 
+    void insert_into_database(create_user& data) {
+        string name = data.name;
+        int age = data.age;
+        float weight = data.weight;
+        float height = data.height;
+        string username = data.username;
+        string password = data.password;
+        char gender = data.gender;
+
+        int rc = sqlite3_initialize();
+        if (rc != SQLITE_OK) {
+            cout<<"sqlite3_initialize failed"<<endl;
+        }
+
+        sqlite3 *db;
+        rc = sqlite3_open("fitness_database.db",&db);
+        if(rc != SQLITE_OK) {
+            cout<<"Can't open database"<<endl;
+        }
+
+
+        const char *sql = "CREATE TABLE IF NOT EXISTS user (name TEXT , age INTEGER, gender TEXT, weight REAL, height REAL, username BLOB PRIMARY KEY, password BLOB)";
+        rc = sqlite3_exec(db, sql, 0, 0, 0);
+        if (rc != SQLITE_OK) {
+            cout<<"Can't create table"<<endl;
+        }
+
+        char str[256];
+        sprintf(str,"INSERT INTO workouts (name, age, gender, weight, height, username, password) VALUES ('%s','%d','%s','%f','%f','%s','%s')",name,age,gender,weight,height,username,password);
+        rc = sqlite3_exec(db, str, 0, 0, 0);
+        if (rc != SQLITE_OK) {
+            // Handle error
+        }
+    }
 
     int main() {
         string username,password; //using it in switch case 2nd block
@@ -72,14 +108,14 @@ class create_user {
 
             cout<<"Enter your choice: ";
             int choice;
-            cin>>choice;   
-            
+            cin>>choice;
+
             switch(choice) {
                 case 1:
                     user1.registeruser();
                     break;
                 case 2:
-                    
+
                     cout<<"Enter username";
                     cin>>username;
                     cout<<"Enter password";
@@ -88,11 +124,12 @@ class create_user {
                     if(user1.validateLogin(username,password)){
                         cout << "Login Successfull";
                         user1.displayuser();
+
                     }
                     else{
                         cout << "Invalid username or password";
                     }
-                    
+
                     break;
                 default:
                     cout<<"Wrong option";
@@ -102,12 +139,3 @@ class create_user {
         getch();
     }
 
-void storeUserData(string& username,string& password) {
-    ofstream file("users.txt", ios::app);
-    if (file.is_open()) {
-        file << username << ":" << password <<  endl;
-        file.close();
-    } else {
-        cerr << "Error opening file!" << endl;
-    }
-}
