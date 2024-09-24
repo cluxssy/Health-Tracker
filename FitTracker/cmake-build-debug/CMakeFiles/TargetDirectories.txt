@@ -1,0 +1,3 @@
+C:/Users/DEEPTI/CLionProjects/FitTracker/cmake-build-debug/CMakeFiles/FitTracker.dir
+C:/Users/DEEPTI/CLionProjects/FitTracker/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/DEEPTI/CLionProjects/FitTracker/cmake-build-debug/CMakeFiles/rebuild_cache.dir
