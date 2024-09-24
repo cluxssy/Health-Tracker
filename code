@@ -1,9 +1,8 @@
 #include<iostream>
 #include<conio.h>
-#include<sqlite3.h>
+#include"sqlite/sqlite3.h"
 
 using namespace std;
-void database();
 
 class create_user {
     string name;
@@ -13,6 +12,7 @@ class create_user {
     float height;
     string username;
     string password;
+
     public :
     void registeruser() {
         cout<<"Enter name: ";
@@ -59,27 +59,26 @@ class create_user {
             cout<<weight<<endl;
             cout<<height<<endl;
         }
-        friend void insert_into_database(create_user&);
-    };
-
-    void insert_into_database(create_user& data) {
-        string name = data.name;
-        int age = data.age;
-        float weight = data.weight;
-        float height = data.height;
-        string username = data.username;
-        string password = data.password;
-        char gender = data.gender;
+        void insert_into_database() {
 
         int rc = sqlite3_initialize();
         if (rc != SQLITE_OK) {
             cout<<"sqlite3_initialize failed"<<endl;
+            return;
+        }
+        else {
+            cout<<"sqlite3_initialize success"<<endl;
         }
 
         sqlite3 *db;
         rc = sqlite3_open("fitness_database.db",&db);
         if(rc != SQLITE_OK) {
             cout<<"Can't open database"<<endl;
+            sqlite3_close(db);
+            return;
+        }
+        else {
+            cout<<"Opened database successfully"<<endl;
         }
 
 
@@ -87,15 +86,29 @@ class create_user {
         rc = sqlite3_exec(db, sql, 0, 0, 0);
         if (rc != SQLITE_OK) {
             cout<<"Can't create table"<<endl;
+            sqlite3_close(db);
+            return;
+        }
+        else {
+            cout<<"Created table successfully"<<endl;
         }
 
         char str[256];
-        sprintf(str,"INSERT INTO workouts (name, age, gender, weight, height, username, password) VALUES ('%s','%d','%s','%f','%f','%s','%s')",name,age,gender,weight,height,username,password);
+        sprintf(str,"INSERT INTO user (name, age, gender, weight, height, username, password) VALUES ('%s','%d','%c','%f','%f','%s','%s')",name.c_str(),age,gender,weight,height,username.c_str(),password.c_str());
         rc = sqlite3_exec(db, str, 0, 0, 0);
         if (rc != SQLITE_OK) {
-            // Handle error
+            cout<<"Can't insert table"<<endl;
+            sqlite3_close(db);
+            return;
         }
+        else {
+            cout<<"Insert table successfully"<<endl;
+        }
+        sqlite3_close(db);
     }
+    };
+
+
 
     int main() {
         string username,password; //using it in switch case 2nd block
@@ -113,6 +126,7 @@ class create_user {
             switch(choice) {
                 case 1:
                     user1.registeruser();
+                    user1.insert_into_database();
                     break;
                 case 2:
 
