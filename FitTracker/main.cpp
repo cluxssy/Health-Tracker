@@ -3,6 +3,15 @@
 #include"sqlite/sqlite3.h"
 
 using namespace std;
+struct tempdata_storage {
+    string name;
+    char gender;
+    int age;
+    float weight;
+    float height;
+}user_temp_data;
+
+
 
 class create_user {
     string name;
@@ -12,6 +21,7 @@ class create_user {
     float height;
     string username;
     string password;
+
 
 
     public :
@@ -45,6 +55,7 @@ class create_user {
         cout<<"Enter password";
         cin>>password;
         cout<<"User Created successfully!!"<<endl;
+
     }
     bool validateLogin(string username,string password){
         sqlite3 *db;
@@ -77,13 +88,6 @@ class create_user {
             return false;
         }
     }
-    void displayuser(){
-        cout<<name[0]<<endl;
-        cout<<gender<<endl;
-        cout<<age<<endl;
-        cout<<weight<<endl;
-        cout<<height<<endl;
-    }
 
     void insert_into_database();
     void retreive_data(const string& username);
@@ -107,22 +111,24 @@ void create_user::retreive_data(const string &username) {
     sqlite3_bind_text(stmt, 1, username.c_str(), -1, NULL);
     while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
         const unsigned char *namepointer = sqlite3_column_text(stmt, 0);
-        string name = string(reinterpret_cast<const char*>(namepointer));
-        const unsigned char *genderpointer = sqlite3_column_text(stmt, 1);
-        string gender = string(reinterpret_cast<const char*>(genderpointer));
-        int age = sqlite3_column_int(stmt, 2);
-        auto weight = (float)sqlite3_column_double(stmt, 3);
-        auto height= (float)sqlite3_column_double(stmt, 4);
+        user_temp_data.name = string(reinterpret_cast<const char*>(namepointer));
+        user_temp_data.age = sqlite3_column_int(stmt, 1);
+        const unsigned char *genderpointer = sqlite3_column_text(stmt, 2);
+        string genderstr(reinterpret_cast<const char*>(genderpointer));
+        user_temp_data.gender=genderstr.at(0);
+        user_temp_data.weight = (float)sqlite3_column_double(stmt, 3);
+        user_temp_data.height= (float)sqlite3_column_double(stmt, 4);
         const unsigned char *usernamepointer = sqlite3_column_text(stmt, 5);
         string password = string(reinterpret_cast<const char*>(usernamepointer));
         const unsigned char *passwordpointer = sqlite3_column_text(stmt, 6);
         string username = string(reinterpret_cast<const char*>(passwordpointer));
     }
-    cout<<"Name: "<<name<<endl;
-    cout<<"Gender: "<<gender<<endl;
-    cout<<"Age: "<<age<<endl;
-    cout<<"Weight: "<<weight<<endl;
-    cout<<"Height: "<<height<<endl;
+
+    cout<<"Name: "<<user_temp_data.name<<endl;
+    cout<<"Gender: "<<user_temp_data.gender<<endl;
+    cout<<"Age: "<<user_temp_data.age<<endl;
+    cout<<"Weight: "<<user_temp_data.weight<<endl;
+    cout<<"Height: "<<user_temp_data.height<<endl;
 }
 void create_user::insert_into_database() {
 
@@ -201,8 +207,6 @@ void create_user::insert_into_database() {
                     cout << "Login Successfull";
                     user1.retreive_data(username);
 
-
-
                 }
                 else{
                     cout << "Invalid username or password";
@@ -210,9 +214,12 @@ void create_user::insert_into_database() {
                 }
 
                 break;
+                case 3:
+                    exit(0);
                 default:
                     cout<<"Wrong option";
                 break;
+
             }
         }
         getch();
